@@ -26,6 +26,12 @@
                    class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out">
         </div>
 
+        <div class="mb-6">
+            <label for="wishFrom" class="block text-gray-700 text-sm font-semibold mb-2">Wish From:</label>
+            <input type="text" id="wishFrom" placeholder="Jaise: Aapke Dost"
+                   class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out">
+        </div>
+
         <button id="createLinkButton"
                 class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-150 ease-in-out transform hover:scale-105">
             Link Banayein
@@ -45,7 +51,8 @@
 
     <script>
         const personNameInput = document.getElementById('personName');
-        const birthDateInput = document.getElementById('birthDate'); // Abhi use nahi ho raha link mein, par form mein hai
+        const birthDateInput = document.getElementById('birthDate');
+        const wishFromInput = document.getElementById('wishFrom');
         const createLinkButton = document.getElementById('createLinkButton');
         const generatedLinkContainer = document.getElementById('generatedLinkContainer');
         const shareableLinkElement = document.getElementById('shareableLink');
@@ -55,7 +62,8 @@
 
         createLinkButton.addEventListener('click', () => {
             const name = personNameInput.value.trim();
-            // const dob = birthDateInput.value; // Agar future mein use karna ho
+            const birthDate = birthDateInput.value;
+            const wishFrom = wishFromInput.value.trim();
 
             if (name === "") {
                 errorMessageElement.textContent = "Kripya apna naam daalein!";
@@ -64,17 +72,29 @@
                 return;
             }
 
+            if (birthDate === "") {
+                errorMessageElement.textContent = "Kripya janm tithi daalein!";
+                errorMessageElement.style.display = 'block';
+                generatedLinkContainer.style.display = 'none';
+                return;
+            }
+
             errorMessageElement.style.display = 'none';
 
-            // Link 'index.html' page ke liye banega
             const baseWisherUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/')) + '/index.html';
-            const generatedUrl = `${baseWisherUrl}?name=${encodeURIComponent(name)}`;
+            const params = new URLSearchParams();
+            params.append('name', name);
+            params.append('dob', birthDate);
+            if (wishFrom) {
+                params.append('from', wishFrom);
+            }
+            const generatedUrl = `${baseWisherUrl}?${params.toString()}`;
 
             shareableLinkElement.href = generatedUrl;
             shareableLinkElement.textContent = generatedUrl;
             shareableLinkInput.value = generatedUrl;
             generatedLinkContainer.style.display = 'block';
-            copyMessageElement.style.display = 'none'; // Reset copy message
+            copyMessageElement.style.display = 'none';
         });
 
         shareableLinkInput.addEventListener('click', () => {

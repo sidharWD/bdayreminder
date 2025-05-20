@@ -59,11 +59,18 @@
             <span class="absolute -top-4 -left-4 text-4xl sparkle">🎁</span>
         </div>
 
+        <div id="ageDisplay" class="text-center text-2xl font-bold text-purple-600 mb-4" style="display: none;">
+            <!-- Age will appear here -->
+        </div>
+
         <div id="wishMessageContainer" class="mt-8 relative">
             <div id="wishMessage"
                  class="text-center text-xl text-gray-800 p-6 rounded-xl min-h-[120px] flex items-center justify-center transform transition-all duration-500"
                  style="display: none;">
                 <!-- Wish will appear here -->
+            </div>
+            <div id="wishFrom" class="text-center text-lg text-pink-600 mt-4 font-medium" style="display: none;">
+                <!-- From message will appear here -->
             </div>
         </div>
 
@@ -78,13 +85,97 @@
     </a>
 
     <script>
+        function calculateAge(birthDate) {
+            const today = new Date();
+            const birth = new Date(birthDate);
+            let age = today.getFullYear() - birth.getFullYear();
+            const monthDiff = today.getMonth() - birth.getMonth();
+            
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+                age--;
+            }
+            
+            return age;
+        }
+
         const wishes = [
-            "✨ Happy Birthday, {name}! 🎉\nMay your day sparkle with joy, shimmer with laughter, and shine with everything that makes you happy!",
-            "🌟 Wishing you, {name}, a magical birthday filled with dreams come true!\nMay this special day bring you endless happiness and sweet surprises!",
-            "🎂 Happy Birthday, dear {name}! 🎈\nMay your day be as bright as your smile and as sweet as your heart!",
-            "🎁 On your special day, {name}!\nMay every moment be filled with the warmth of sunshine and the sparkle of starlight!",
-            "🌈 Celebrating wonderful you, {name}! 🎊\nMay your birthday be sprinkled with fun and laughter, wrapped in warmth, and topped with love!"
+            "✨ Happy {age}th Birthday, {name}! 🎉\nMay your day sparkle with joy, shimmer with laughter, and shine with everything that makes you happy!",
+            "🌟 Wishing you, {name}, a magical {age}th birthday filled with dreams come true!\nMay this special day bring you endless happiness and sweet surprises!",
+            "🎂 Happy {age}th Birthday, dear {name}! 🎈\nMay your day be as bright as your smile and as sweet as your heart!",
+            "🎁 On your {age}th birthday, {name}!\nMay every moment be filled with the warmth of sunshine and the sparkle of starlight!",
+            "🌈 Celebrating wonderful you, {name}, on your {age}th birthday! 🎊\nMay your day be sprinkled with fun and laughter, wrapped in warmth, and topped with love!"
         ];
+
+        const wishDisplay = document.getElementById('wishMessage');
+        const wishMessageContainer = document.getElementById('wishMessageContainer');
+        const wishFromDisplay = document.getElementById('wishFrom');
+        const ageDisplay = document.getElementById('ageDisplay');
+
+        function generateAndDisplayWish(name, birthDate, wishFrom) {
+            if (!name || !birthDate) {
+                wishDisplay.innerHTML = `
+                    <div class="text-pink-600 font-semibold">
+                        <span class="text-3xl mb-2 block">🎈</span>
+                        Please use your special birthday link!
+                        <span class="text-3xl mt-2 block">🎁</span>
+                    </div>`;
+                wishDisplay.style.display = 'flex';
+                return;
+            }
+
+            const age = calculateAge(birthDate);
+            ageDisplay.textContent = `Turning ${age} Today! 🎉`;
+            ageDisplay.style.display = 'block';
+
+            celebrateWithConfetti();
+            
+            wishDisplay.style.display = 'flex';
+            wishDisplay.style.opacity = '0';
+            wishDisplay.style.transform = 'scale(0.9)';
+
+            setTimeout(() => {
+                const randomIndex = Math.floor(Math.random() * wishes.length);
+                let personalizedWish = wishes[randomIndex]
+                    .replace(/{name}/g, name)
+                    .replace(/{age}/g, age);
+                wishDisplay.innerHTML = personalizedWish.split('\n').join('<br>');
+                
+                if (wishFrom) {
+                    wishFromDisplay.textContent = `- With love from ${wishFrom} ❤️`;
+                    wishFromDisplay.style.display = 'block';
+                }
+                
+                wishDisplay.style.opacity = '1';
+                wishDisplay.style.transform = 'scale(1)';
+                wishDisplay.className = 'text-center text-xl font-medium p-6 rounded-xl min-h-[120px] flex items-center justify-center bg-gradient-to-r from-pink-100 to-purple-100 shadow-lg border border-pink-200 transform transition-all duration-500';
+            }, 200);
+        }
+
+        document.getElementById('generateWish').addEventListener('click', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const nameFromUrl = urlParams.get('name');
+            const birthDateFromUrl = urlParams.get('dob');
+            const wishFromUrl = urlParams.get('from');
+            generateAndDisplayWish(
+                nameFromUrl ? decodeURIComponent(nameFromUrl) : "",
+                birthDateFromUrl,
+                wishFromUrl ? decodeURIComponent(wishFromUrl) : ""
+            );
+        });
+
+        window.addEventListener('load', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const nameFromUrl = urlParams.get('name');
+            const birthDateFromUrl = urlParams.get('dob');
+            const wishFromUrl = urlParams.get('from');
+            if (nameFromUrl && birthDateFromUrl) {
+                generateAndDisplayWish(
+                    decodeURIComponent(nameFromUrl),
+                    birthDateFromUrl,
+                    wishFromUrl ? decodeURIComponent(wishFromUrl) : ""
+                );
+            }
+        });
 
         function celebrateWithConfetti() {
             const count = 200;
@@ -128,52 +219,6 @@
                 startVelocity: 45,
             });
         }
-
-        const wishDisplay = document.getElementById('wishMessage');
-        const wishMessageContainer = document.getElementById('wishMessageContainer');
-
-        function generateAndDisplayWish(name) {
-            if (!name) {
-                wishDisplay.innerHTML = `
-                    <div class="text-pink-600 font-semibold">
-                        <span class="text-3xl mb-2 block">🎈</span>
-                        Please use your special birthday link!
-                        <span class="text-3xl mt-2 block">🎁</span>
-                    </div>`;
-                wishDisplay.style.display = 'flex';
-                return;
-            }
-
-            celebrateWithConfetti();
-            
-            wishDisplay.style.display = 'flex';
-            wishDisplay.style.opacity = '0';
-            wishDisplay.style.transform = 'scale(0.9)';
-
-            setTimeout(() => {
-                const randomIndex = Math.floor(Math.random() * wishes.length);
-                const personalizedWish = wishes[randomIndex].replace('{name}', name);
-                wishDisplay.innerHTML = personalizedWish.split('\n').join('<br>');
-                
-                wishDisplay.style.opacity = '1';
-                wishDisplay.style.transform = 'scale(1)';
-                wishDisplay.className = 'text-center text-xl font-medium p-6 rounded-xl min-h-[120px] flex items-center justify-center bg-gradient-to-r from-pink-100 to-purple-100 shadow-lg border border-pink-200 transform transition-all duration-500';
-            }, 200);
-        }
-
-        document.getElementById('generateWish').addEventListener('click', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const nameFromUrl = urlParams.get('name');
-            generateAndDisplayWish(nameFromUrl ? decodeURIComponent(nameFromUrl) : "");
-        });
-
-        window.addEventListener('load', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const nameFromUrl = urlParams.get('name');
-            if (nameFromUrl) {
-                generateAndDisplayWish(decodeURIComponent(nameFromUrl));
-            }
-        });
     </script>
 </body>
 </html>
