@@ -160,13 +160,7 @@
 
         function generateAndDisplayWish(name, birthDate, wishFrom) {
             if (!name || !birthDate) {
-                wishDisplay.innerHTML = `
-                    <div class="text-pink-600 font-semibold">
-                        <span class="text-3xl mb-2 block">🎈</span>
-                        Please use your special birthday link!
-                        <span class="text-3xl mt-2 block">🎁</span>
-                    </div>`;
-                wishDisplay.style.display = 'flex';
+                window.location.href = 'create_shareable_link.html';
                 return;
             }
 
