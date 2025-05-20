@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>🎉 Birthday Wishes!</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
@@ -39,48 +39,67 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
+
+        @media (max-width: 640px) {
+            .balloon { font-size: 3rem; }
+            .sparkle { font-size: 2.5rem; }
+        }
+
+        /* Prevent text selection during taps on mobile */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Allow text selection in the message container */
+        #wishMessageContainer {
+            -webkit-user-select: text;
+            user-select: text;
+        }
     </style>
 </head>
-<body class="bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
+<body class="bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 min-h-screen flex flex-col items-center justify-center p-3 sm:p-4 relative overflow-hidden">
     <!-- Floating Balloons -->
     <div class="fixed top-0 left-0 w-full h-full pointer-events-none">
-        <div class="balloon text-7xl absolute top-10 left-[10%]">🎈</div>
-        <div class="balloon text-7xl absolute top-20 right-[15%]">🎈</div>
-        <div class="balloon text-7xl absolute top-40 left-[20%]">🎈</div>
-        <div class="balloon text-7xl absolute top-30 right-[25%]">🎈</div>
+        <div class="balloon text-5xl sm:text-7xl absolute top-10 left-[5%] sm:left-[10%]">🎈</div>
+        <div class="balloon text-5xl sm:text-7xl absolute top-20 right-[8%] sm:right-[15%]">🎈</div>
+        <div class="balloon text-5xl sm:text-7xl absolute top-40 left-[12%] sm:left-[20%]">🎈</div>
+        <div class="balloon text-5xl sm:text-7xl absolute top-30 right-[15%] sm:right-[25%]">🎈</div>
     </div>
 
-    <div class="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-lg transform hover:scale-105 transition-transform duration-300">
+    <div class="bg-white/90 backdrop-blur-md p-4 sm:p-8 rounded-2xl shadow-2xl w-full max-w-lg transform hover:scale-105 transition-transform duration-300 mx-3">
         <div class="relative">
-            <h1 class="text-4xl font-bold text-center mb-6 shine p-4 rounded-xl text-white">
+            <h1 class="text-2xl sm:text-4xl font-bold text-center mb-4 sm:mb-6 shine p-3 sm:p-4 rounded-xl text-white">
                 ✨ Birthday Celebration! ✨
             </h1>
-            <span class="absolute -top-4 -right-4 text-4xl sparkle">🎂</span>
-            <span class="absolute -top-4 -left-4 text-4xl sparkle">🎁</span>
+            <span class="absolute -top-3 sm:-top-4 -right-2 sm:-right-4 text-3xl sm:text-4xl sparkle">🎂</span>
+            <span class="absolute -top-3 sm:-top-4 -left-2 sm:-left-4 text-3xl sm:text-4xl sparkle">🎁</span>
         </div>
 
-        <div id="ageDisplay" class="text-center text-2xl font-bold text-purple-600 mb-4" style="display: none;">
+        <div id="ageDisplay" class="text-center text-xl sm:text-2xl font-bold text-purple-600 mb-3 sm:mb-4" style="display: none;">
             <!-- Age will appear here -->
         </div>
 
-        <div id="wishMessageContainer" class="mt-8 relative">
+        <div id="wishMessageContainer" class="mt-6 sm:mt-8 relative">
             <div id="wishMessage"
-                 class="text-center text-xl text-gray-800 p-6 rounded-xl min-h-[120px] flex items-center justify-center transform transition-all duration-500"
+                 class="text-center text-lg sm:text-xl text-gray-800 p-4 sm:p-6 rounded-xl min-h-[100px] sm:min-h-[120px] flex items-center justify-center transform transition-all duration-500"
                  style="display: none;">
                 <!-- Wish will appear here -->
             </div>
-            <div id="wishFrom" class="text-center text-lg text-pink-600 mt-4 font-medium" style="display: none;">
+            <div id="wishFrom" class="text-center text-base sm:text-lg text-pink-600 mt-3 sm:mt-4 font-medium" style="display: none;">
                 <!-- From message will appear here -->
             </div>
         </div>
 
         <button id="generateWish"
-                class="w-full mt-6 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 transform hover:scale-105 transition-all duration-300 text-lg shadow-lg">
+                class="w-full mt-4 sm:mt-6 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 transform hover:scale-105 transition-all duration-300 text-base sm:text-lg shadow-lg active:scale-95">
             ✨ Make a Wish! ✨
         </button>
     </div>
 
-    <a href="create_shareable_link.html" class="mt-6 text-white hover:text-pink-200 text-lg font-medium hover:underline transition-colors duration-300 flex items-center">
+    <a href="create_shareable_link.html" class="mt-4 sm:mt-6 text-white hover:text-pink-200 text-base sm:text-lg font-medium hover:underline transition-colors duration-300 flex items-center">
         <span class="mr-2">🎂</span> Create Your Birthday Link Here! <span class="ml-2">🎈</span>
     </a>
 
