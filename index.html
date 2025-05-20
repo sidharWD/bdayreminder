@@ -159,6 +159,17 @@
         const ageDisplay = document.getElementById('ageDisplay');
 
         function generateAndDisplayWish(name, birthDate, wishFrom) {
+            if (!name || !birthDate) {
+                wishDisplay.innerHTML = `
+                    <div class="text-pink-600 font-semibold">
+                        <span class="text-3xl mb-2 block">🎈</span>
+                        Please use your special birthday link!
+                        <span class="text-3xl mt-2 block">🎁</span>
+                    </div>`;
+                wishDisplay.style.display = 'flex';
+                return;
+            }
+
             const today = new Date();
             const birth = new Date(birthDate);
             const nextBirthday = getNextBirthday(birthDate);
@@ -223,19 +234,15 @@
         window.addEventListener('load', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const nameFromUrl = urlParams.get('name');
-            
-            if (!nameFromUrl) {
-                window.location.href = 'create_shareable_link.html';
-                return;
-            }
-
             const birthDateFromUrl = urlParams.get('dob');
             const wishFromUrl = urlParams.get('from');
-            generateAndDisplayWish(
-                decodeURIComponent(nameFromUrl),
-                birthDateFromUrl,
-                wishFromUrl ? decodeURIComponent(wishFromUrl) : ""
-            );
+            if (nameFromUrl && birthDateFromUrl) {
+                generateAndDisplayWish(
+                    decodeURIComponent(nameFromUrl),
+                    birthDateFromUrl,
+                    wishFromUrl ? decodeURIComponent(wishFromUrl) : ""
+                );
+            }
         });
 
         function celebrateWithConfetti() {
