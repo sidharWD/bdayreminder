@@ -159,11 +159,6 @@
         const ageDisplay = document.getElementById('ageDisplay');
 
         function generateAndDisplayWish(name, birthDate, wishFrom) {
-            if (!name || !birthDate) {
-                window.location.href = 'create_shareable_link.html';
-                return;
-            }
-
             const today = new Date();
             const birth = new Date(birthDate);
             const nextBirthday = getNextBirthday(birthDate);
@@ -228,15 +223,19 @@
         window.addEventListener('load', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const nameFromUrl = urlParams.get('name');
+            
+            if (!nameFromUrl) {
+                window.location.href = 'create_shareable_link.html';
+                return;
+            }
+
             const birthDateFromUrl = urlParams.get('dob');
             const wishFromUrl = urlParams.get('from');
-            if (nameFromUrl && birthDateFromUrl) {
-                generateAndDisplayWish(
-                    decodeURIComponent(nameFromUrl),
-                    birthDateFromUrl,
-                    wishFromUrl ? decodeURIComponent(wishFromUrl) : ""
-                );
-            }
+            generateAndDisplayWish(
+                decodeURIComponent(nameFromUrl),
+                birthDateFromUrl,
+                wishFromUrl ? decodeURIComponent(wishFromUrl) : ""
+            );
         });
 
         function celebrateWithConfetti() {
