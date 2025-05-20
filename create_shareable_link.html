@@ -67,6 +67,14 @@
                 <input type="text" id="shareableLinkInput" readonly 
                        class="w-full p-3 border border-pink-200 rounded-lg text-center bg-white/80 cursor-pointer text-sm sm:text-base hover:bg-pink-50 transition-all duration-300" 
                        title="Click to copy the magical link">
+                <div class="flex gap-2 mt-3">
+                    <button onclick="copyLink()" class="flex-1 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 active:scale-95 flex items-center justify-center">
+                        <span class="mr-2">📋</span> Copy Link
+                    </button>
+                    <button onclick="shareLink()" class="flex-1 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 active:scale-95 flex items-center justify-center">
+                        <span class="mr-2">📲</span> Share Link
+                    </button>
+                </div>
                 <p id="copyMessage" class="text-sm text-pink-600 text-center mt-2 font-medium" style="display:none;">✨ Magic link copied to clipboard! ✨</p>
             </div>
             <p class="text-sm text-gray-600 mt-3 text-center">Share this magical link to spread birthday joy! 🎈</p>
@@ -84,6 +92,37 @@
         const shareableLinkInput = document.getElementById('shareableLinkInput');
         const errorMessageElement = document.getElementById('errorMessage');
         const copyMessageElement = document.getElementById('copyMessage');
+
+        async function copyLink() {
+            shareableLinkInput.select();
+            try {
+                await navigator.clipboard.writeText(shareableLinkInput.value);
+                copyMessageElement.textContent = '✨ Magical link copied to clipboard! ✨';
+                copyMessageElement.style.display = 'block';
+                setTimeout(() => { copyMessageElement.style.display = 'none'; }, 2000);
+            } catch (err) {
+                console.error('Error copying:', err);
+            }
+        }
+
+        async function shareLink() {
+            const name = personNameInput.value.trim();
+            const shareData = {
+                title: '✨ Birthday Wish for ' + name + ' ✨',
+                text: 'Click to see a special birthday wish for ' + name + '! 🎂',
+                url: shareableLinkInput.value
+            };
+
+            try {
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                } else {
+                    await copyLink();
+                }
+            } catch (err) {
+                console.error('Error sharing:', err);
+            }
+        }
 
         createLinkButton.addEventListener('click', () => {
             const name = personNameInput.value.trim();
@@ -129,6 +168,28 @@
             copyMessageElement.style.display = 'block';
             setTimeout(() => { copyMessageElement.style.display = 'none'; }, 2000);
         });
+
+        function copyLink() {
+            shareableLinkInput.select();
+            document.execCommand('copy');
+            copyMessageElement.textContent = '✨ Magical link copied to clipboard! ✨';
+            copyMessageElement.style.display = 'block';
+            setTimeout(() => { copyMessageElement.style.display = 'none'; }, 2000);
+        }
+
+        function shareLink() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Magical Birthday Link',
+                    text: 'Check out this magical birthday wish!',
+                    url: shareableLinkInput.value,
+                }).then(() => {
+                    console.log('Thanks for sharing!');
+                }).catch(console.error);
+            } else {
+                alert('Sharing is not supported on this browser. Please copy the link instead.');
+            }
+        }
     </script>
 
 </body>

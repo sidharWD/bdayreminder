@@ -93,12 +93,15 @@
             </div>
         </div>
 
-        
+        <div class="flex gap-4 mt-4 sm:mt-6">
+            <button onclick="shareWish()" class="text-white hover:text-pink-200 text-base sm:text-lg font-medium transition-colors duration-300 flex items-center bg-pink-600/30 hover:bg-pink-600/40 backdrop-blur-md px-4 py-2 rounded-lg">
+                <span class="mr-2">🎁</span> Share This Wish <span class="ml-2">📲</span>
+            </button>
+            <a href="create_shareable_link.html" class="text-white hover:text-pink-200 text-base sm:text-lg font-medium transition-colors duration-300 flex items-center bg-pink-600/30 hover:bg-pink-600/40 backdrop-blur-md px-4 py-2 rounded-lg">
+                <span class="mr-2">🎂</span> Create Your Wish <span class="ml-2">🎈</span>
+            </a>
+        </div>
     </div>
-
-    <a href="create_shareable_link.html" class="mt-4 sm:mt-6 text-white hover:text-pink-200 text-base sm:text-lg font-medium hover:underline transition-colors duration-300 flex items-center">
-        <span class="mr-2">🎂</span> Create Your Birthday Link Here! <span class="ml-2">🎈</span>
-    </a>
 
     <script>
         function calculateAge(birthDate) {
@@ -158,6 +161,48 @@
         const wishFromDisplay = document.getElementById('wishFrom');
         const ageDisplay = document.getElementById('ageDisplay');
 
+        async function shareWish() {
+            const shareData = {
+                title: '✨ Birthday Wish',
+                text: wishDisplay.innerText + (wishFromDisplay.style.display !== 'none' ? '\n' + wishFromDisplay.innerText : ''),
+                url: window.location.href
+            };
+
+            try {
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                } else {
+                    await navigator.clipboard.writeText(shareData.text + '\n\n' + shareData.url);
+                    const notification = document.createElement('div');
+                    notification.className = 'fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-black/75 text-white px-4 py-2 rounded-lg backdrop-blur-md text-sm';
+                    notification.textContent = '✨ Link and wish copied to clipboard! ✨';
+                    document.body.appendChild(notification);
+                    setTimeout(() => notification.remove(), 2000);
+                }
+            } catch (err) {
+                console.error('Error sharing:', err);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const nameFromUrl = urlParams.get('name');
+            
+            if (!nameFromUrl) {
+                window.location.href = 'create_shareable_link.html';
+                return;
+            }
+
+            const birthDateFromUrl = urlParams.get('dob');
+            const wishFromUrl = urlParams.get('from');
+            
+            generateAndDisplayWish(
+                decodeURIComponent(nameFromUrl),
+                birthDateFromUrl || "",
+                wishFromUrl ? decodeURIComponent(wishFromUrl) : ""
+            );
+        });
+
         function generateAndDisplayWish(name, birthDate, wishFrom) {
             if (!name) return;
 
@@ -209,25 +254,6 @@
                 wishDisplay.className = 'text-center text-xl font-medium p-6 rounded-xl min-h-[120px] flex items-center justify-center bg-gradient-to-r from-pink-100 to-purple-100 shadow-lg border border-pink-200 transform transition-all duration-500';
             }, 200);
         }
-
-        window.addEventListener('load', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const nameFromUrl = urlParams.get('name');
-            
-            if (!nameFromUrl) {
-                window.location.href = 'create_shareable_link.html';
-                return;
-            }
-
-            const birthDateFromUrl = urlParams.get('dob');
-            const wishFromUrl = urlParams.get('from');
-            
-            generateAndDisplayWish(
-                decodeURIComponent(nameFromUrl),
-                birthDateFromUrl || "",
-                wishFromUrl ? decodeURIComponent(wishFromUrl) : ""
-            );
-        });
 
         function celebrateWithConfetti() {
             const count = 200;
