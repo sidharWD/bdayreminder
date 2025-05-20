@@ -40,19 +40,10 @@
         const wishDisplay = document.getElementById('wishMessage');
         const wishMessageContainer = document.getElementById('wishMessageContainer');
 
-        const wishes = [
-            "Happy Birthday, {name}! 🎉 Hope you have a fantastic day filled with joy, laughter, and everything you wished for!",
-            "Wishing you the happiest of birthdays, {name}! 🎂 May your year ahead be packed with success and happiness.",
-            "Happy Birthday, {name}! 🥳 Cheers to another amazing year of adventures and great memories.",
-            "May your birthday be as special and wonderful as you are, {name}! ✨ Have an absolutely brilliant day!",
-            "Sending you the warmest wishes on your special day, {name}! 🎁 Hope it's filled with love and celebration."
-        ];
-
-        generateButton.addEventListener('click', () => {
-            const name = nameInput.value.trim();
-
+        // Function to generate and display wish
+        function generateAndDisplayWish(name) {
             // Clear previous styles
-            wishDisplay.classList.remove('bg-red-100', 'border-red-400', 'text-red-700', 'border', 'bg-green-100', 'border-green-400', 'text-green-700');
+            wishDisplay.classList.remove('bg-red-100', 'border-red-400', 'text-red-700', 'border', 'bg-green-100', 'border-green-400', 'text-green-700', 'bg-yellow-100', 'border-yellow-400', 'text-yellow-700', 'bg-purple-100', 'border-purple-400', 'text-purple-700');
             wishDisplay.style.display = 'flex'; // Make it visible and use flex for centering
 
             if (name === "") {
@@ -74,9 +65,35 @@
                 wishDisplay.classList.add('bg-purple-100', 'border', 'border-purple-400', 'text-purple-700');
                 
                 wishMessageContainer.classList.remove('animate-pulse');
-            }, 500); // 0.5 second delay
+            }, 300); // Shorter delay if name is from URL
+        }
 
+        const wishes = [
+            "Happy Birthday, {name}! 🎉 Hope you have a fantastic day filled with joy, laughter, and everything you wished for!",
+            "Wishing you the happiest of birthdays, {name}! 🎂 May your year ahead be packed with success and happiness.",
+            "Happy Birthday, {name}! 🥳 Cheers to another amazing year of adventures and great memories.",
+            "May your birthday be as special and wonderful as you are, {name}! ✨ Have an absolutely brilliant day!",
+            "Sending you the warmest wishes on your special day, {name}! 🎁 Hope it's filled with love and celebration."
+        ];
+
+        generateButton.addEventListener('click', () => {
+            const currentName = nameInput.value.trim();
+            generateAndDisplayWish(currentName);
         });
+
+        // Check for name in URL on page load
+        window.addEventListener('load', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const nameFromUrl = urlParams.get('name');
+
+            if (nameFromUrl) {
+                const decodedName = decodeURIComponent(nameFromUrl);
+                nameInput.value = decodedName; // Pre-fill the input
+                // Optionally, automatically generate the wish
+                generateAndDisplayWish(decodedName);
+            }
+        });
+
     </script>
 
 </body>
