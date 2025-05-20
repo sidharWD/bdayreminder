@@ -98,12 +98,43 @@
             return age;
         }
 
-        const wishes = [
+        function getNextBirthday(birthDate) {
+            const today = new Date();
+            const birth = new Date(birthDate);
+            const nextBirthday = new Date(today.getFullYear(), birth.getMonth(), birth.getDate());
+            
+            if (nextBirthday < today) {
+                nextBirthday.setFullYear(today.getFullYear() + 1);
+            }
+            
+            return nextBirthday;
+        }
+
+        function getDaysDifference(date1, date2) {
+            const diffTime = Math.abs(date2 - date1);
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
+
+        const todayWishes = [
             "✨ Happy {age}th Birthday, {name}! 🎉\nMay your day sparkle with joy, shimmer with laughter, and shine with everything that makes you happy!",
             "🌟 Wishing you, {name}, a magical {age}th birthday filled with dreams come true!\nMay this special day bring you endless happiness and sweet surprises!",
             "🎂 Happy {age}th Birthday, dear {name}! 🎈\nMay your day be as bright as your smile and as sweet as your heart!",
             "🎁 On your {age}th birthday, {name}!\nMay every moment be filled with the warmth of sunshine and the sparkle of starlight!",
             "🌈 Celebrating wonderful you, {name}, on your {age}th birthday! 🎊\nMay your day be sprinkled with fun and laughter, wrapped in warmth, and topped with love!"
+        ];
+
+        const upcomingWishes = [
+            "🎈 Hey {name}! Only {days} days until your {age}th birthday! The countdown to your special day has begun! 🎉",
+            "✨ {name}, get ready! Your {age}th birthday is just {days} days away! Can't wait to celebrate you! 🎂",
+            "🌟 {days} days to go until we celebrate your {age}th birthday, {name}! The excitement is building! 🎊",
+            "🎁 Mark your calendar, {name}! Your {age}th birthday arrives in {days} days! It's going to be amazing! ✨"
+        ];
+
+        const pastWishes = [
+            "🌈 {name}, your {age}th year is going to be incredible! Hope you're still feeling the birthday magic! ✨",
+            "🎁 {name}, {days} days into your {age}th year and you're already shining so bright! Keep spreading your joy! 🌟",
+            "✨ {name}, you're {days} days into being {age}, and you're rocking it! Here's to many more amazing days! 🎉",
+            "🎈 {name}, you've been {age} for {days} wonderful days! Keep embracing every moment with your beautiful smile! 🌺"
         ];
 
         const wishDisplay = document.getElementById('wishMessage');
@@ -123,11 +154,31 @@
                 return;
             }
 
+            const today = new Date();
+            const birth = new Date(birthDate);
+            const nextBirthday = getNextBirthday(birthDate);
             const age = calculateAge(birthDate);
-            ageDisplay.textContent = `Turning ${age} Today! 🎉`;
-            ageDisplay.style.display = 'block';
+            const isBirthday = today.getMonth() === birth.getMonth() && today.getDate() === birth.getDate();
+            const daysDiff = getDaysDifference(today, nextBirthday);
+            const daysAfterBirthday = getDaysDifference(new Date(today.getFullYear(), birth.getMonth(), birth.getDate()), today);
 
-            celebrateWithConfetti();
+            let wishes;
+            let displayAge = age;
+
+            if (isBirthday) {
+                wishes = todayWishes;
+                ageDisplay.textContent = `🎉 Happy ${age}th Birthday! 🎉`;
+                celebrateWithConfetti();
+            } else if (today < nextBirthday) {
+                wishes = upcomingWishes;
+                displayAge = age + 1;
+                ageDisplay.textContent = `${daysDiff} days until your ${displayAge}th birthday! 🎈`;
+            } else {
+                wishes = pastWishes;
+                ageDisplay.textContent = `Age ${age} • ${daysAfterBirthday} days into your amazing year! ✨`;
+            }
+
+            ageDisplay.style.display = 'block';
             
             wishDisplay.style.display = 'flex';
             wishDisplay.style.opacity = '0';
@@ -137,7 +188,8 @@
                 const randomIndex = Math.floor(Math.random() * wishes.length);
                 let personalizedWish = wishes[randomIndex]
                     .replace(/{name}/g, name)
-                    .replace(/{age}/g, age);
+                    .replace(/{age}/g, displayAge)
+                    .replace(/{days}/g, isBirthday ? 0 : daysDiff);
                 wishDisplay.innerHTML = personalizedWish.split('\n').join('<br>');
                 
                 if (wishFrom) {
