@@ -3,67 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Birthday Wisher</title>
+    <title>🎉 Birthday Wishes!</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        /* You can add custom styles here if needed, but Tailwind should cover most things */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .balloon {
+            animation: float 3s ease-in-out infinite;
+        }
+        .balloon:nth-child(2) { animation-delay: 0.2s; }
+        .balloon:nth-child(3) { animation-delay: 0.4s; }
+        .balloon:nth-child(4) { animation-delay: 0.6s; }
+        
+        @keyframes sparkle {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .sparkle {
+            animation: sparkle 2s ease-in-out infinite;
+        }
+        
+        .shine {
+            background: linear-gradient(90deg, #ff69b4, #ff1493, #ff69b4);
+            background-size: 200% 200%;
+            animation: gradient 3s ease infinite;
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
     </style>
 </head>
-<body class="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 min-h-screen flex items-center justify-center p-4">
+<body class="bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <!-- Floating Balloons -->
+    <div class="fixed top-0 left-0 w-full h-full pointer-events-none">
+        <div class="balloon text-7xl absolute top-10 left-[10%]">🎈</div>
+        <div class="balloon text-7xl absolute top-20 right-[15%]">🎈</div>
+        <div class="balloon text-7xl absolute top-40 left-[20%]">🎈</div>
+        <div class="balloon text-7xl absolute top-30 right-[25%]">🎈</div>
+    </div>
 
-    <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Birthday Wish Generator</h1>
+    <div class="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-lg transform hover:scale-105 transition-transform duration-300">
+        <div class="relative">
+            <h1 class="text-4xl font-bold text-center mb-6 shine p-4 rounded-xl text-white">
+                ✨ Birthday Celebration! ✨
+            </h1>
+            <span class="absolute -top-4 -right-4 text-4xl sparkle">🎂</span>
+            <span class="absolute -top-4 -left-4 text-4xl sparkle">🎁</span>
+        </div>
 
-        <!-- Name input removed as requested -->
-
-        <button id="generateWish"
-                class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-150 ease-in-out transform hover:scale-105">
-            Generate Wish
-        </button>
-
-        <div id="wishMessageContainer" class="mt-8 p-1 min-h-[100px]">
+        <div id="wishMessageContainer" class="mt-8 relative">
             <div id="wishMessage"
-                 class="text-center text-lg text-gray-700 p-4 rounded-lg min-h-[80px] flex items-center justify-center"
+                 class="text-center text-xl text-gray-800 p-6 rounded-xl min-h-[120px] flex items-center justify-center transform transition-all duration-500"
                  style="display: none;">
                 <!-- Wish will appear here -->
             </div>
         </div>
+
+        <button id="generateWish"
+                class="w-full mt-6 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 transform hover:scale-105 transition-all duration-300 text-lg shadow-lg">
+            ✨ Make a Wish! ✨
+        </button>
     </div>
 
+    <a href="create_shareable_link.html" class="mt-6 text-white hover:text-pink-200 text-lg font-medium hover:underline transition-colors duration-300 flex items-center">
+        <span class="mr-2">🎂</span> Create Your Birthday Link Here! <span class="ml-2">🎈</span>
+    </a>
+
     <script>
-        // Name input removed, so use name from URL only
+        const wishes = [
+            "✨ Happy Birthday, {name}! 🎉\nMay your day sparkle with joy, shimmer with laughter, and shine with everything that makes you happy!",
+            "🌟 Wishing you, {name}, a magical birthday filled with dreams come true!\nMay this special day bring you endless happiness and sweet surprises!",
+            "🎂 Happy Birthday, dear {name}! 🎈\nMay your day be as bright as your smile and as sweet as your heart!",
+            "🎁 On your special day, {name}!\nMay every moment be filled with the warmth of sunshine and the sparkle of starlight!",
+            "🌈 Celebrating wonderful you, {name}! 🎊\nMay your birthday be sprinkled with fun and laughter, wrapped in warmth, and topped with love!"
+        ];
+
+        function celebrateWithConfetti() {
+            const count = 200;
+            const defaults = {
+                origin: { y: 0.7 },
+                spread: 360,
+                ticks: 100,
+                gravity: 0.5,
+                decay: 0.94,
+                startVelocity: 30
+            };
+
+            function fire(particleRatio, opts) {
+                confetti({
+                    ...defaults,
+                    ...opts,
+                    particleCount: Math.floor(count * particleRatio)
+                });
+            }
+
+            fire(0.25, {
+                spread: 26,
+                startVelocity: 55,
+            });
+            fire(0.2, {
+                spread: 60,
+            });
+            fire(0.35, {
+                spread: 100,
+                decay: 0.91,
+                scalar: 0.8
+            });
+            fire(0.1, {
+                spread: 120,
+                startVelocity: 25,
+                decay: 0.92,
+                scalar: 1.2
+            });
+            fire(0.1, {
+                spread: 120,
+                startVelocity: 45,
+            });
+        }
+
         const wishDisplay = document.getElementById('wishMessage');
         const wishMessageContainer = document.getElementById('wishMessageContainer');
 
         function generateAndDisplayWish(name) {
-            wishDisplay.classList.remove('bg-red-100', 'border-red-400', 'text-red-700', 'border', 'bg-green-100', 'border-green-400', 'text-green-700', 'bg-yellow-100', 'border-yellow-400', 'text-yellow-700', 'bg-purple-100', 'border-purple-400', 'text-purple-700');
-            wishDisplay.style.display = 'flex';
-
             if (!name) {
-                wishDisplay.textContent = "Please use your shareable link!";
-                wishDisplay.classList.add('bg-yellow-100', 'border', 'border-yellow-400', 'text-yellow-700');
+                wishDisplay.innerHTML = `
+                    <div class="text-pink-600 font-semibold">
+                        <span class="text-3xl mb-2 block">🎈</span>
+                        Please use your special birthday link!
+                        <span class="text-3xl mt-2 block">🎁</span>
+                    </div>`;
+                wishDisplay.style.display = 'flex';
                 return;
             }
 
-            wishMessageContainer.classList.remove('animate-pulse');
-            void wishMessageContainer.offsetWidth;
-            wishMessageContainer.classList.add('animate-pulse');
+            celebrateWithConfetti();
+            
+            wishDisplay.style.display = 'flex';
+            wishDisplay.style.opacity = '0';
+            wishDisplay.style.transform = 'scale(0.9)';
+
             setTimeout(() => {
                 const randomIndex = Math.floor(Math.random() * wishes.length);
                 const personalizedWish = wishes[randomIndex].replace('{name}', name);
-                wishDisplay.textContent = personalizedWish;
-                wishDisplay.classList.add('bg-purple-100', 'border', 'border-purple-400', 'text-purple-700');
-                wishMessageContainer.classList.remove('animate-pulse');
-            }, 300);
+                wishDisplay.innerHTML = personalizedWish.split('\n').join('<br>');
+                
+                wishDisplay.style.opacity = '1';
+                wishDisplay.style.transform = 'scale(1)';
+                wishDisplay.className = 'text-center text-xl font-medium p-6 rounded-xl min-h-[120px] flex items-center justify-center bg-gradient-to-r from-pink-100 to-purple-100 shadow-lg border border-pink-200 transform transition-all duration-500';
+            }, 200);
         }
-
-        const wishes = [
-            "Happy Birthday, {name}! 🎉 Hope you have a fantastic day filled with joy, laughter, and everything you wished for!",
-            "Wishing you the happiest of birthdays, {name}! 🎂 May your year ahead be packed with success and happiness.",
-            "Happy Birthday, {name}! 🥳 Cheers to another amazing year of adventures and great memories.",
-            "May your birthday be as special and wonderful as you are, {name}! ✨ Have an absolutely brilliant day!",
-            "Sending you the warmest wishes on your special day, {name}! 🎁 Hope it's filled with love and celebration."
-        ];
 
         document.getElementById('generateWish').addEventListener('click', () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -79,8 +175,5 @@
             }
         });
     </script>
-<a href="create_shareable_link.html" class="text-sm text-pink-600 hover:text-pink-800 hover:underline">
-                🎂 Apna shareable birthday link yahan banayein!
-            </a>
 </body>
 </html>
