@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shareable Birthday Link Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles agar zaroorat ho */
+    </style>
+</head>
+<body class="bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-lg">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Apna Birthday Link Banayein</h1>
+
+        <div class="mb-6">
+            <label for="personName" class="block text-gray-700 text-sm font-semibold mb-2">Naam:</label>
+            <input type="text" id="personName" placeholder="Jaise: Priya"
+                   class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out">
+        </div>
+
+        <div class="mb-6">
+            <label for="birthDate" class="block text-gray-700 text-sm font-semibold mb-2">Janm Tithi (Birth Date):</label>
+            <input type="date" id="birthDate"
+                   class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out">
+        </div>
+
+        <button id="createLinkButton"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-150 ease-in-out transform hover:scale-105">
+            Link Banayein
+        </button>
+
+        <div id="generatedLinkContainer" class="mt-8" style="display: none;">
+            <h2 class="text-xl font-semibold text-gray-700 mb-2 text-center">Aapka Shareable Link:</h2>
+            <div class="bg-gray-100 p-4 rounded-lg">
+                <a id="shareableLink" href="#" target="_blank" class="text-blue-600 hover:text-blue-800 break-all block text-center mb-2"></a>
+                <input type="text" id="shareableLinkInput" readonly class="w-full p-2 border border-gray-300 rounded-md text-center bg-gray-50 cursor-pointer" title="Click to copy">
+                <p id="copyMessage" class="text-sm text-green-600 text-center mt-2" style="display:none;">Link copied!</p>
+            </div>
+             <p class="text-xs text-gray-500 mt-2 text-center">Is link ko copy karke aap kisi ko bhi bhej sakte hain!</p>
+        </div>
+         <p id="errorMessage" class="text-red-500 text-center mt-4" style="display:none;"></p>
+    </div>
+
+    <script>
+        const personNameInput = document.getElementById('personName');
+        const birthDateInput = document.getElementById('birthDate'); // Abhi use nahi ho raha link mein, par form mein hai
+        const createLinkButton = document.getElementById('createLinkButton');
+        const generatedLinkContainer = document.getElementById('generatedLinkContainer');
+        const shareableLinkElement = document.getElementById('shareableLink');
+        const shareableLinkInput = document.getElementById('shareableLinkInput');
+        const errorMessageElement = document.getElementById('errorMessage');
+        const copyMessageElement = document.getElementById('copyMessage');
+
+        createLinkButton.addEventListener('click', () => {
+            const name = personNameInput.value.trim();
+            // const dob = birthDateInput.value; // Agar future mein use karna ho
+
+            if (name === "") {
+                errorMessageElement.textContent = "Kripya apna naam daalein!";
+                errorMessageElement.style.display = 'block';
+                generatedLinkContainer.style.display = 'none';
+                return;
+            }
+
+            errorMessageElement.style.display = 'none';
+
+            // Link 'index.html' page ke liye banega
+            const baseWisherUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/')) + '/index.html';
+            const generatedUrl = `${baseWisherUrl}?name=${encodeURIComponent(name)}`;
+
+            shareableLinkElement.href = generatedUrl;
+            shareableLinkElement.textContent = generatedUrl;
+            shareableLinkInput.value = generatedUrl;
+            generatedLinkContainer.style.display = 'block';
+            copyMessageElement.style.display = 'none'; // Reset copy message
+        });
+
+        shareableLinkInput.addEventListener('click', () => {
+            shareableLinkInput.select();
+            document.execCommand('copy');
+            copyMessageElement.textContent = 'Link copy ho gaya!';
+            copyMessageElement.style.display = 'block';
+            setTimeout(() => { copyMessageElement.style.display = 'none'; }, 2000);
+        });
+    </script>
+
+</body>
+</html>
