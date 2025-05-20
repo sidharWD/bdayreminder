@@ -14,11 +14,7 @@
     <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
         <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Birthday Wish Generator</h1>
 
-        <div class="mb-6">
-            <label for="name" class="block text-gray-700 text-sm font-semibold mb-2">Person's Name:</label>
-            <input type="text" id="name" name="name" placeholder="E.g., Alex"
-                   class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition duration-150 ease-in-out">
-        </div>
+        <!-- Name input removed as requested -->
 
         <button id="generateWish"
                 class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-150 ease-in-out transform hover:scale-105">
@@ -35,37 +31,30 @@
     </div>
 
     <script>
-        const nameInput = document.getElementById('name');
-        const generateButton = document.getElementById('generateWish');
+        // Name input removed, so use name from URL only
         const wishDisplay = document.getElementById('wishMessage');
         const wishMessageContainer = document.getElementById('wishMessageContainer');
 
-        // Function to generate and display wish
         function generateAndDisplayWish(name) {
-            // Clear previous styles
             wishDisplay.classList.remove('bg-red-100', 'border-red-400', 'text-red-700', 'border', 'bg-green-100', 'border-green-400', 'text-green-700', 'bg-yellow-100', 'border-yellow-400', 'text-yellow-700', 'bg-purple-100', 'border-purple-400', 'text-purple-700');
-            wishDisplay.style.display = 'flex'; // Make it visible and use flex for centering
+            wishDisplay.style.display = 'flex';
 
-            if (name === "") {
-                wishDisplay.textContent = "Please enter a name first! 😊";
+            if (!name) {
+                wishDisplay.textContent = "Please use your shareable link!";
                 wishDisplay.classList.add('bg-yellow-100', 'border', 'border-yellow-400', 'text-yellow-700');
                 return;
             }
 
-            // Add a little animation to the container
-            wishMessageContainer.classList.remove('animate-pulse'); // remove if already there
-            void wishMessageContainer.offsetWidth; // Trigger reflow to restart animation
+            wishMessageContainer.classList.remove('animate-pulse');
+            void wishMessageContainer.offsetWidth;
             wishMessageContainer.classList.add('animate-pulse');
-            
-            setTimeout(() => { // Simulate a little "thinking" time and let pulse be visible
+            setTimeout(() => {
                 const randomIndex = Math.floor(Math.random() * wishes.length);
                 const personalizedWish = wishes[randomIndex].replace('{name}', name);
-
                 wishDisplay.textContent = personalizedWish;
                 wishDisplay.classList.add('bg-purple-100', 'border', 'border-purple-400', 'text-purple-700');
-                
                 wishMessageContainer.classList.remove('animate-pulse');
-            }, 300); // Shorter delay if name is from URL
+            }, 300);
         }
 
         const wishes = [
@@ -76,24 +65,19 @@
             "Sending you the warmest wishes on your special day, {name}! 🎁 Hope it's filled with love and celebration."
         ];
 
-        generateButton.addEventListener('click', () => {
-            const currentName = nameInput.value.trim();
-            generateAndDisplayWish(currentName);
+        document.getElementById('generateWish').addEventListener('click', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const nameFromUrl = urlParams.get('name');
+            generateAndDisplayWish(nameFromUrl ? decodeURIComponent(nameFromUrl) : "");
         });
 
-        // Check for name in URL on page load
         window.addEventListener('load', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const nameFromUrl = urlParams.get('name');
-
             if (nameFromUrl) {
-                const decodedName = decodeURIComponent(nameFromUrl);
-                nameInput.value = decodedName; // Pre-fill the input
-                // Optionally, automatically generate the wish
-                generateAndDisplayWish(decodedName);
+                generateAndDisplayWish(decodeURIComponent(nameFromUrl));
             }
         });
-
     </script>
 <a href="create_shareable_link.html" class="text-sm text-pink-600 hover:text-pink-800 hover:underline">
                 🎂 Apna shareable birthday link yahan banayein!
